@@ -31,16 +31,21 @@ def sendSmsMessage(text, to, from_):
     initial = 1
     msg_chars = 144
     text_total_len = len(text)
-    total_parts = math.ceil(text_total_len / msg_chars)
-    while start < text_total_len:
-        end_position = (initial * msg_chars)
-        suffix = "\n- Part {} of {}".format(
-            initial, total_parts)
-        message_text = text[start: end_position] + suffix
+    if text_total_len <= 160:
         deliverMessageViaCarrier(
-            message_text, to, from_)
-        initial += 1
-        start += msg_chars
+            text, to, from_)
+    else:
+        total_parts = math.ceil(text_total_len / msg_chars)
+        while start < text_total_len:
+            end_position = (initial * msg_chars)
+            suffix = "\n- Part {} of {}".format(
+                initial, total_parts)
+            message_text = text[start: end_position] + suffix
+            deliverMessageViaCarrier(
+                message_text, to, from_)
+            initial += 1
+            start += msg_chars
+    return True
 
 # Uncomment the below code to test the function.
 # sendSmsMessage(sample_text, 'to', 'from_')
